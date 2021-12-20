@@ -39,5 +39,4 @@ def test_a_is_0_exceptions():
 def test_invalid_args(arg, error_msg):
     with pytest.raises(ValidationError) as e:
         solve(arg, arg, arg)
-    print(dir(e))
     assert e.value.errors()[0]['msg'] == error_msg

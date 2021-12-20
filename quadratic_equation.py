@@ -1,4 +1,5 @@
 from math import isnan, isinf, sqrt
+from decimal import Decimal, getcontext
 
 from pydantic import BaseModel, validator
 
@@ -22,13 +23,15 @@ class ArgsValidationSchema(BaseModel):
         return v
 
 
-def solve(a: float, b: float, c: float) -> list:
+def solve(a: float, b: float, c: float, precision: int = 9) -> list:
+    getcontext().prec = precision
     args = ArgsValidationSchema(**{'a': a, 'b': b, 'c': c})
-    discr = args.b ** 2 - 4 * args.a * args.c
+    a, b, c = Decimal(args.a), Decimal(args.b), Decimal(args.c)
+    discr: Decimal = b ** 2 - 4 * a * c
 
     if discr > 0:
-        x1 = (-b + sqrt(discr)) / (2 * a)
-        x2 = (-b - sqrt(discr)) / (2 * a)
+        x1 = (-b + Decimal(sqrt(discr))) / (2 * a)
+        x2 = (-b - Decimal(sqrt(discr))) / (2 * a)
         return [x1, x2]
     elif discr == 0:
         x = -b / (2 * a)
